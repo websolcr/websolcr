@@ -32,28 +32,10 @@
           extend: {
             colors: {
               primary: {
-                50: "#F4F1E9",
-                100: "#E8E3D3",
-                200: "#D1C7A7",
-                300: "#B1D182",
-                400: "#688F4E",
-                500: "#2B463C",
-                600: "#1F332B",
-                700: "#1A2A23",
-                800: "#151F1C",
-                900: "#0F1514",
-              },
-              accent: {
-                50: "#F4F1E9",
-                100: "#E8E3D3",
-                200: "#D1C7A7",
-                300: "#B1D182",
-                400: "#688F4E",
-                500: "#2B463C",
-                600: "#1F332B",
-                700: "#1A2A23",
-                800: "#151F1C",
-                900: "#0F1514",
+                50: "#eff6ff",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
               },
             },
           },
@@ -62,7 +44,8 @@
     </script>
 
     <!-- Preload key resources -->
-    <link rel="preload" href="js/simple-components.js" as="script" />
+    <link rel="preload" href="js/componentLoader.js" as="script" />
+    <link rel="preload" href="js/main-components.js" as="script" />
   </head>
   <body>
     <!-- Loading indicator -->
@@ -87,15 +70,6 @@
     <!-- Features Component -->
     <div data-component="features"></div>
 
-    <!-- About Component -->
-    <div data-component="about"></div>
-
-    <!-- Tech Partners Component -->
-    <div data-component="tech-partners"></div>
-
-    <!-- Testimonials Component -->
-    <div data-component="testimonials"></div>
-
     <!-- CTA Component -->
     <div data-component="cta"></div>
 
@@ -103,6 +77,21 @@
     <div data-component="footer"></div>
 
     <!-- Scripts -->
-    <script src="js/simple-components.js"></script>
+    <script type="module" src="js/main-components.js"></script>
+
+    <!-- Hide loading indicator after components load -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Small delay to ensure components are rendered
+        setTimeout(() => {
+          const loading = document.getElementById("loading");
+          if (loading) {
+            loading.style.opacity = "0";
+            loading.style.transition = "opacity 0.3s ease-out";
+            setTimeout(() => loading.remove(), 300);
+          }
+        }, 100);
+      });
+    </script>
   </body>
 </html>

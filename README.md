@@ -5,7 +5,7 @@ A modern, responsive SaaS marketing website built with HTML template components,
 ## Features
 
 - ⚡ **Lightning Fast** - HTML template components with vanilla JavaScript
-- 📱 **Fully Responsive** - Looks great on all devices  
+- 📱 **Fully Responsive** - Looks great on all devices
 - 🎨 **Modern Design** - Built with Tailwind CSS utility classes
 - 🚀 **SEO Optimized** - Semantic HTML and meta tags
 - 🧩 **Component-Based** - Modular HTML templates for easy maintenance
@@ -22,12 +22,13 @@ A modern, responsive SaaS marketing website built with HTML template components,
 ## Architecture
 
 ### Component Structure
+
 ```
 websolcr/
 ├── index.html (main page with component placeholders)
 ├── templates/
 │   ├── navigation.html (header navigation)
-│   ├── hero.html (main hero section) 
+│   ├── hero.html (main hero section)
 │   ├── features.html (services section)
 │   ├── cta.html (call-to-action)
 │   └── footer.html (footer)
@@ -36,6 +37,7 @@ websolcr/
 ```
 
 ### How It Works
+
 1. `index.html` contains component placeholders with `data-component` attributes
 2. `simple-components.js` fetches HTML templates and renders them dynamically
 3. Each component gets initialized with its own event handlers and functionality
@@ -46,6 +48,7 @@ websolcr/
 ### Local Development
 
 1. Clone the repository
+
 ```bash
 git clone https://github.com/websolcr/websolcr.git
 cd websolcr
