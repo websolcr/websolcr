@@ -1,32 +1,54 @@
-# YourSaaS Marketing Website
+# WebSolCr - SaaS Application Engineering
 
-A modern, responsive marketing website built with vanilla HTML, Tailwind CSS, and JavaScript. Optimized for performance and conversion.
+A modern, responsive SaaS marketing website built with HTML template components, Tailwind CSS, and vanilla JavaScript. Optimized for performance and GitHub Pages deployment.
 
 ## Features
 
-- ⚡ **Lightning Fast** - Vanilla HTML/CSS/JS for maximum performance
-- 📱 **Fully Responsive** - Looks great on all devices
+- ⚡ **Lightning Fast** - HTML template components with vanilla JavaScript
+- 📱 **Fully Responsive** - Looks great on all devices  
 - 🎨 **Modern Design** - Built with Tailwind CSS utility classes
 - 🚀 **SEO Optimized** - Semantic HTML and meta tags
-- 🔧 **Easy to Customize** - Clean, maintainable code
-- 📈 **Conversion Focused** - Strategic CTAs and social proof
+- 🧩 **Component-Based** - Modular HTML templates for easy maintenance
+- 📈 **Conversion Focused** - Strategic CTAs and service-focused messaging
+- 🌐 **GitHub Pages Ready** - No build process required
 
 ## Tech Stack
 
-- **HTML5** - Semantic markup
-- **Tailwind CSS** - Utility-first styling
-- **Vanilla JavaScript** - Smooth interactions and animations
-- **GitHub Pages** - Free hosting and deployment
+- **HTML5** - Semantic markup with template components
+- **Tailwind CSS** - Utility-first styling via CDN
+- **Vanilla JavaScript** - Component loader and smooth interactions
+- **GitHub Pages** - Static hosting and automatic deployment
+
+## Architecture
+
+### Component Structure
+```
+websolcr/
+├── index.html (main page with component placeholders)
+├── templates/
+│   ├── navigation.html (header navigation)
+│   ├── hero.html (main hero section) 
+│   ├── features.html (services section)
+│   ├── cta.html (call-to-action)
+│   └── footer.html (footer)
+└── js/
+    └── simple-components.js (component loader)
+```
+
+### How It Works
+1. `index.html` contains component placeholders with `data-component` attributes
+2. `simple-components.js` fetches HTML templates and renders them dynamically
+3. Each component gets initialized with its own event handlers and functionality
+4. No build process or ES6 modules required - perfect for GitHub Pages
 
 ## Getting Started
 
 ### Local Development
 
 1. Clone the repository
-
 ```bash
-git clone https://github.com/yourusername/yourrepo.git
-cd yourrepo
+git clone https://github.com/websolcr/websolcr.git
+cd websolcr
 ```
 
 2. Open `index.html` in your browser or use a local server:
