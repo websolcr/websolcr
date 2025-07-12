@@ -91,12 +91,38 @@ npx http-server
 
 ## Deployment
 
-### GitHub Pages (Recommended)
+### GitHub Pages with Environment Variables
 
-1. Push your code to a GitHub repository
-2. Go to repository Settings → Pages
-3. Select "Deploy from a branch" and choose "main"
-4. Your site will be available at `https://yourusername.github.io/yourrepo`
+This project uses GitHub Secrets to securely handle EmailJS credentials during deployment.
+
+#### Setting Up GitHub Secrets
+
+1. Go to your GitHub repository
+2. Navigate to **Settings** → **Secrets and variables** → **Actions**
+3. Add the following repository secrets:
+   - `EMAILJS_SERVICE_ID` - Your EmailJS service ID
+   - `EMAILJS_TEMPLATE_ID` - Your EmailJS template ID  
+   - `EMAILJS_PUBLIC_KEY` - Your EmailJS public key
+   - `CONTACT_EMAIL` - Your contact email address
+
+#### Deployment Process
+
+1. Push your code to the `main` branch
+2. GitHub Actions will automatically:
+   - Create `config.js` with your secrets during build
+   - Deploy to GitHub Pages
+3. Your site will be available at `https://yourusername.github.io/yourrepo`
+
+#### Local Development
+
+For local development, create a `config.js` file based on `config.example.js`:
+
+```bash
+cp config.example.js config.js
+# Edit config.js with your actual EmailJS credentials
+```
+
+**Note**: `config.js` is in `.gitignore` to prevent committing credentials to the repository.
 
 ### Custom Domain
 
@@ -123,14 +149,25 @@ npx http-server
 ## File Structure
 
 ```
-├── index.html          # Main landing page
+├── index.html              # Main landing page
 ├── js/
-│   └── main.js         # JavaScript interactions
+│   └── simple-components.js # Component loader and interactions
+├── templates/              # HTML component templates
+│   ├── navigation.html
+│   ├── hero.html
+│   ├── features.html
+│   ├── about.html
+│   ├── tech-partners.html
+│   ├── testimonials.html
+│   ├── cta.html
+│   └── footer.html
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml  # GitHub Actions deployment
-├── README.md           # This file
-└── CNAME              # Custom domain (optional)
+│       └── deploy.yml      # GitHub Actions deployment with secrets
+├── config.example.js       # Template for local development
+├── .gitignore             # Excludes config.js with credentials
+├── README.md              # This file
+└── CNAME                  # Custom domain (optional)
 ```
 
 ## Key Sections
