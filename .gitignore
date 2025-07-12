@@ -40,3 +40,4 @@ build/
 
 # Configuration files with sensitive data
 config.js
+# Testing signed commits
