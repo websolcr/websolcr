@@ -1,0 +1,16 @@
+# Jekyll configuration for GitHub Pages
+title: WebSolCr
+description: SaaS Application Engineering
+baseurl: ""
+url: "https://websolcr.com"
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-feed
+
+# Exclude files from processing
+exclude:
+  - node_modules
+  - .git
+  - README.md 

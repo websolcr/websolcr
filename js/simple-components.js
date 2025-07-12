@@ -7,6 +7,39 @@ class SimpleComponentLoader {
     this.loadPromises = new Map();
   }
 
+  // Send contact email using EmailJS
+  async sendContactEmail(data) {
+    console.log('Sending contact email with data:', data);
+    
+    // Get EmailJS configuration
+    const SERVICE_ID = window.EMAILJS_SERVICE_ID || 'your-emailjs-service-id';
+    const TEMPLATE_ID = window.EMAILJS_TEMPLATE_ID || 'your-emailjs-template-id';
+    const PUBLIC_KEY = window.EMAILJS_PUBLIC_KEY || 'your-emailjs-public-key';
+    
+    // Prepare template parameters for EmailJS
+    const templateParams = {
+      to_email: 'sureshhemal@hotmail.com',
+      to_name: 'Suresh Hemal',
+      from_name: data.name,
+      from_email: data.email,
+      company: data.company || 'Not specified',
+      project_type: data['project-type'],
+      message: data.message,
+      subject: `New Contact Form Submission - ${data['project-type']}`
+    };
+    
+    try {
+      // Send email via EmailJS with new format (no public key parameter needed)
+      const response = await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
+      
+      console.log('Email sent successfully via EmailJS:', response);
+      return { success: true, message: 'Email sent successfully' };
+    } catch (error) {
+      console.error('Failed to send email via EmailJS:', error);
+      throw error;
+    }
+  }
+
   // Load and cache a template
   async loadTemplate(name, url) {
     console.log(`📥 Loading template: ${name} from ${url}`);
@@ -269,11 +302,95 @@ class SimpleComponentLoader {
 
   // CTA component initialization
   initCTA(element) {
-    const buttons = element.querySelectorAll('button');
-    buttons.forEach(button => {
+    // Contact form toggle functionality
+    const contactToggle = element.querySelector('#contact-toggle');
+    const contactForm = element.querySelector('#contact-form');
+    const closeForm = element.querySelector('#close-form');
+    const formElement = element.querySelector('#contact-form-element');
+
+    if (contactToggle && contactForm) {
+      contactToggle.addEventListener('click', () => {
+        contactForm.classList.remove('hidden');
+        contactForm.style.display = 'block';
+        contactForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+
+    if (closeForm && contactForm) {
+      closeForm.addEventListener('click', () => {
+        contactForm.classList.add('hidden');
+        contactForm.style.display = 'none';
+      });
+    }
+
+    // Form submission handling
+    if (formElement) {
+      formElement.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(formElement);
+        const data = Object.fromEntries(formData);
+        
+        // Show loading state
+        const submitButton = formElement.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.textContent = 'Sending...';
+        submitButton.disabled = true;
+        
+        try {
+          // Send email using EmailJS (you'll need to set up EmailJS account)
+          // For now, we'll simulate the email sending
+          await this.sendContactEmail(data);
+          
+          // Show success message
+          const successMessage = document.createElement('div');
+          successMessage.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4';
+          successMessage.innerHTML = `
+            <strong>Thank you!</strong> Your message has been sent. We'll get back to you within 24 hours.
+          `;
+          
+          // Replace form with success message
+          formElement.innerHTML = '';
+          formElement.appendChild(successMessage);
+          
+          // Hide form after 3 seconds
+          setTimeout(() => {
+            contactForm.classList.add('hidden');
+            contactForm.style.display = 'none';
+            // Reset form after hiding
+            setTimeout(() => {
+              formElement.innerHTML = formElement.getAttribute('data-original-html') || '';
+              this.initCTA(element); // Re-initialize event listeners
+            }, 300);
+          }, 3000);
+          
+        } catch (error) {
+          console.error('Failed to send email:', error);
+          
+          // Show error message
+          const errorMessage = document.createElement('div');
+          errorMessage.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
+          errorMessage.innerHTML = `
+            <strong>Error!</strong> Failed to send message. Please try again or contact us directly.
+          `;
+          
+          // Insert error message at the top of the form
+          formElement.insertBefore(errorMessage, formElement.firstChild);
+          
+          // Reset button
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
+        }
+      });
+    }
+
+    // Handle other buttons (like "View Our Process")
+    const otherButtons = element.querySelectorAll('button:not(#contact-toggle):not(#close-form)');
+    otherButtons.forEach(button => {
       button.addEventListener('click', () => {
-        // Add contact functionality here
         console.log('CTA button clicked:', button.textContent);
+        // Add specific functionality for other buttons here
       });
     });
   }

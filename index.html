@@ -102,6 +102,27 @@
     <!-- Footer Component -->
     <div data-component="footer"></div>
 
+    <!-- EmailJS Configuration -->
+    <script src="config.js"></script>
+    <script>
+      // EmailJS configuration loaded from external config file
+      // config.js should be added to .gitignore to keep credentials secure
+      window.EMAILJS_SERVICE_ID = window.EMAILJS_CONFIG?.SERVICE_ID || 'your-service-id';
+      window.EMAILJS_TEMPLATE_ID = window.EMAILJS_CONFIG?.TEMPLATE_ID || 'your-template-id';
+      window.EMAILJS_PUBLIC_KEY = window.EMAILJS_CONFIG?.PUBLIC_KEY || 'your-public-key';
+      window.CONTACT_EMAIL = window.EMAILJS_CONFIG?.CONTACT_EMAIL || 'your-email@example.com';
+    </script>
+
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+      (function() {
+        emailjs.init({
+          publicKey: window.EMAILJS_PUBLIC_KEY,
+        });
+      })();
+    </script>
+
     <!-- Scripts -->
     <script src="js/simple-components.js"></script>
   </body>
