@@ -9,8 +9,6 @@ class SimpleComponentLoader {
 
   // Send contact email using EmailJS
   async sendContactEmail(data) {
-    console.log('Sending contact email with data:', data);
-    
     // Get EmailJS configuration
     const SERVICE_ID = window.EMAILJS_SERVICE_ID || 'your-emailjs-service-id';
     const TEMPLATE_ID = window.EMAILJS_TEMPLATE_ID || 'your-emailjs-template-id';
@@ -32,7 +30,6 @@ class SimpleComponentLoader {
       // Send email via EmailJS with new format (no public key parameter needed)
       const response = await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
       
-      console.log('Email sent successfully via EmailJS:', response);
       return { success: true, message: 'Email sent successfully' };
     } catch (error) {
       console.error('Failed to send email via EmailJS:', error);
@@ -42,12 +39,7 @@ class SimpleComponentLoader {
 
   // Load and cache a template
   async loadTemplate(name, url) {
-    console.log(`📥 Loading template: ${name} from ${url}`);
-    console.log(`📥 Template name type: ${typeof name}`);
-    console.log(`📥 Template name length: ${name.length}`);
-
     if (this.loadPromises.has(name)) {
-      console.log(`📦 Using cached promise for ${name}`);
       return this.loadPromises.get(name);
     }
 
@@ -56,9 +48,6 @@ class SimpleComponentLoader {
       if (typeof fetch !== "undefined") {
         fetch(url)
           .then((response) => {
-            console.log(
-              `📡 Fetch response for ${name}: ${response.status} ${response.statusText}`
-            );
             if (!response.ok) {
               throw new Error(
                 `Failed to load template ${name}: ${response.status}`
@@ -67,15 +56,10 @@ class SimpleComponentLoader {
             return response.text();
           })
           .then((html) => {
-            console.log(`💾 Caching template ${name}, length: ${html.length}`);
             this.templates.set(name, html);
             resolve(html);
           })
           .catch((error) => {
-            console.error(
-              `❌ Fetch failed for ${name}, trying XMLHttpRequest:`,
-              error
-            );
             // Fallback to XMLHttpRequest
             this.loadWithXMLHttpRequest(url, name, resolve, reject);
           });
@@ -101,10 +85,6 @@ class SimpleComponentLoader {
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
-          console.log(`📡 XHR response for ${name}: ${xhr.status}`);
-          console.log(
-            `💾 Caching template ${name}, length: ${xhr.responseText.length}`
-          );
           this.templates.set(name, xhr.responseText);
           resolve(xhr.responseText);
         } else {
@@ -120,16 +100,8 @@ class SimpleComponentLoader {
 
   // Render a template into a target element
   async renderComponent(name, targetElement, templateUrl) {
-    console.log(`🎯 Rendering component: ${name} from ${templateUrl}`);
-    console.log(`🎯 Component name type: ${typeof name}`);
-    console.log(`🎯 Component name length: ${name.length}`);
-    console.log(`🎯 Target element:`, targetElement);
-    console.log(`🎯 Target element dataset:`, targetElement.dataset);
-    
     try {
       const template = await this.loadTemplate(name, templateUrl);
-      console.log(`📄 Template loaded for ${name}, length: ${template.length}`);
-      console.log(`📄 Template preview:`, template.substring(0, 200) + "...");
 
       // Create a temporary container to parse the template
       const tempContainer = document.createElement("div");
@@ -138,28 +110,18 @@ class SimpleComponentLoader {
       // Extract content from the template tag
       const templateTag = tempContainer.querySelector("template");
       if (templateTag) {
-        console.log(`📋 Found template tag for ${name}`);
-        console.log(`📋 Template tag id:`, templateTag.id);
-        // Safari-compatible template content extraction
         let content = templateTag.innerHTML;
         if (!content && templateTag.content) {
           // Fallback for older browsers
           content = templateTag.content.innerHTML;
         }
-        console.log(`📋 Template content length:`, content.length);
-        console.log(`📋 Template content preview:`, content.substring(0, 200) + "...");
-        console.log(`📋 Template content includes TEST LOADED:`, content.includes("TEST LOADED"));
         targetElement.innerHTML = content;
       } else {
-        console.log(`📄 No template tag found for ${name}, using raw content`);
-        console.log(`📄 Raw content includes TEST LOADED:`, template.includes("TEST LOADED"));
         targetElement.innerHTML = template;
       }
 
       // Initialize component-specific functionality
       this.initializeComponent(name, targetElement);
-      console.log(`✅ Component ${name} rendered successfully`);
-      console.log(`✅ Final innerHTML length:`, targetElement.innerHTML.length);
     } catch (error) {
       console.error(`❌ Failed to render component ${name}:`, error);
       targetElement.innerHTML = `<div class="p-4 text-red-600">Failed to load ${name} component</div>`;
@@ -398,7 +360,6 @@ class SimpleComponentLoader {
     const otherButtons = element.querySelectorAll('button:not(#contact-toggle):not(#close-form)');
     otherButtons.forEach(button => {
       button.addEventListener('click', () => {
-        console.log('CTA button clicked:', button.textContent);
         // Add specific functionality for other buttons here
       });
     });
@@ -631,17 +592,11 @@ class SimpleComponentLoader {
         templateUrl = componentMap.features;
       else if (componentName === "about") {
         templateUrl = componentMap.about;
-        console.log(`🔍 About component found! Template URL: "${templateUrl}"`);
-        console.log(`🔍 componentMap.about value: "${componentMap.about}"`);
       }
       else if (componentName === "tech-partners")
         templateUrl = componentMap["tech-partners"];
       else if (componentName === "published-work") {
         templateUrl = componentMap["published-work"];
-        console.log(`🔍 Published Work component found! Template URL: "${templateUrl}"`);
-        console.log(`🔍 componentMap["published-work"] value: "${componentMap["published-work"]}"`);
-        console.log(`🔍 componentMap keys:`, Object.keys(componentMap));
-        console.log(`🔍 componentMap has published-work:`, "published-work" in componentMap);
       }
       else if (componentName === "our-work")
         templateUrl = componentMap["our-work"];
@@ -718,11 +673,7 @@ function domReady(callback) {
 
 // Auto-load components when DOM is ready
 domReady(async () => {
-  console.log("🚀 DOM ready - starting component loading");
-
-  // Set a fallback timeout to hide loading indicator
   const loadingTimeout = setTimeout(() => {
-    console.log("⏰ Loading timeout reached - hiding loading indicator");
     const loading = document.getElementById("loading");
     if (loading) {
       loading.style.opacity = "0";
@@ -733,28 +684,18 @@ domReady(async () => {
 
   try {
     await componentLoader.loadAllComponents();
-    console.log("✅ Component loading completed");
-
-    // Clear the timeout since we loaded successfully
     clearTimeout(loadingTimeout);
-
-    // Hide loading indicator immediately after components load
     const loading = document.getElementById("loading");
     if (loading) {
-      console.log(
-        "🎉 Hiding loading indicator after successful component load"
-      );
       loading.style.opacity = "0";
       loading.style.transition = "opacity 0.3s ease-out";
       setTimeout(() => loading.remove(), 300);
     }
   } catch (error) {
     console.error("❌ Component loading failed:", error);
-    // Still hide loading indicator even if there was an error
     clearTimeout(loadingTimeout);
     const loading = document.getElementById("loading");
     if (loading) {
-      console.log("⚠️ Hiding loading indicator after error");
       loading.style.opacity = "0";
       loading.style.transition = "opacity 0.3s ease-out";
       setTimeout(() => loading.remove(), 300);
@@ -764,29 +705,22 @@ domReady(async () => {
 
 // Also try loading on window load as a fallback
 window.addEventListener("load", async () => {
-  console.log("🔄 Window load fired - checking if components need loading");
   const componentElements = document.querySelectorAll("[data-component]");
   const unloadedElements = Array.from(componentElements).filter(
     (el) => !el.innerHTML || el.innerHTML.includes("Unknown component")
   );
 
   if (unloadedElements.length > 0) {
-    console.log(
-      `🔄 Found ${unloadedElements.length} unloaded components, retrying...`
-    );
     try {
       await componentLoader.loadAllComponents();
-      console.log("✅ Component loading completed on window load");
     } catch (error) {
       console.error("❌ Component loading failed on window load:", error);
     }
   }
 
-  // Force hide loading indicator if still visible
   setTimeout(() => {
     const loading = document.getElementById("loading");
     if (loading && loading.style.opacity !== "0") {
-      console.log("🔧 Force hiding loading indicator from window load");
       loading.style.opacity = "0";
       loading.style.transition = "opacity 0.3s ease-out";
       setTimeout(() => loading.remove(), 300);
@@ -798,7 +732,6 @@ window.addEventListener("load", async () => {
 setTimeout(() => {
   const loading = document.getElementById("loading");
   if (loading) {
-    console.log("🦁 Safari fallback - hiding loading indicator");
     loading.style.opacity = "0";
     loading.style.transition = "opacity 0.3s ease-out";
     setTimeout(() => loading.remove(), 300);
