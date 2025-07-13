@@ -552,37 +552,12 @@ class SimpleComponentLoader {
       footer: "templates/footer.html",
     };
 
-    console.log("Component map:", componentMap);
-    console.log("Component map keys:", Object.keys(componentMap));
-    console.log(
-      "tech-partners in componentMap:",
-      "tech-partners" in componentMap
-    );
-    console.log(
-      "testimonials in componentMap:",
-      "testimonials" in componentMap
-    );
-    console.log(
-      "published-work in componentMap:",
-      "published-work" in componentMap
-    );
-    console.log(
-      "componentMap['tech-partners']:",
-      componentMap["tech-partners"]
-    );
-    console.log("componentMap['testimonials']:", componentMap["testimonials"]);
-    console.log("componentMap['published-work']:", componentMap["published-work"]);
-
     const componentElements = document.querySelectorAll("[data-component]");
-    console.log(`Found ${componentElements.length} component elements to load`);
 
     const loadPromises = [];
 
     componentElements.forEach((element, index) => {
       const componentName = element.dataset.component;
-      console.log(`Component name from dataset: "${componentName}"`);
-      console.log(`Component name type: ${typeof componentName}`);
-      console.log(`Component name length: ${componentName.length}`);
 
       // More explicit lookup for Safari compatibility
       let templateUrl = null;
@@ -605,19 +580,7 @@ class SimpleComponentLoader {
       else if (componentName === "cta") templateUrl = componentMap.cta;
       else if (componentName === "footer") templateUrl = componentMap.footer;
 
-      console.log(
-        `Processing component ${index + 1}/${
-          componentElements.length
-        }: "${componentName}"`
-      );
-      console.log(`Template URL: "${templateUrl}"`);
-      console.log(`Template URL type: ${typeof templateUrl}`);
-      console.log(`Component name exact match check: "${componentName}" === "published-work" = ${componentName === "published-work"}`);
-      console.log(`Component map has published-work:`, "published-work" in componentMap);
-      console.log(`Component map published-work value:`, componentMap["published-work"]);
-
       if (templateUrl) {
-        console.log(`✅ Found template URL for ${componentName}: ${templateUrl}`);
         const promise = this.renderComponent(
           componentName,
           element,
@@ -625,34 +588,12 @@ class SimpleComponentLoader {
         );
         loadPromises.push(promise);
       } else {
-        console.warn(`❌ Unknown component: ${componentName}`);
-        console.warn(
-          `Available components: ${Object.keys(componentMap).join(", ")}`
-        );
-        console.warn(`Component map keys:`, Object.keys(componentMap));
-        console.warn(`Component map values:`, Object.values(componentMap));
         element.innerHTML = `<div class="p-4 text-yellow-600">Unknown component: ${componentName}</div>`;
       }
     });
 
     try {
       await Promise.all(loadPromises);
-      console.log("✅ All components loaded successfully");
-
-      // Debug: Check if components are visible
-      componentElements.forEach((element, index) => {
-        const componentName = element.dataset.component;
-        console.log(
-          `Component ${index + 1}: ${componentName} - innerHTML length: ${
-            element.innerHTML.length
-          }`
-        );
-        console.log(
-          `Component ${index + 1}: ${componentName} - visible: ${
-            element.offsetHeight > 0
-          }`
-        );
-      });
     } catch (error) {
       console.error("❌ Some components failed to load:", error);
     }
