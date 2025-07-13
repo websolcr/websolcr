@@ -43,6 +43,8 @@ class SimpleComponentLoader {
   // Load and cache a template
   async loadTemplate(name, url) {
     console.log(`📥 Loading template: ${name} from ${url}`);
+    console.log(`📥 Template name type: ${typeof name}`);
+    console.log(`📥 Template name length: ${name.length}`);
 
     if (this.loadPromises.has(name)) {
       console.log(`📦 Using cached promise for ${name}`);
@@ -119,6 +121,8 @@ class SimpleComponentLoader {
   // Render a template into a target element
   async renderComponent(name, targetElement, templateUrl) {
     console.log(`🎯 Rendering component: ${name} from ${templateUrl}`);
+    console.log(`🎯 Component name type: ${typeof name}`);
+    console.log(`🎯 Component name length: ${name.length}`);
     console.log(`🎯 Target element:`, targetElement);
     console.log(`🎯 Target element dataset:`, targetElement.dataset);
     
@@ -144,9 +148,11 @@ class SimpleComponentLoader {
         }
         console.log(`📋 Template content length:`, content.length);
         console.log(`📋 Template content preview:`, content.substring(0, 200) + "...");
+        console.log(`📋 Template content includes TEST LOADED:`, content.includes("TEST LOADED"));
         targetElement.innerHTML = content;
       } else {
         console.log(`📄 No template tag found for ${name}, using raw content`);
+        console.log(`📄 Raw content includes TEST LOADED:`, template.includes("TEST LOADED"));
         targetElement.innerHTML = template;
       }
 
@@ -177,6 +183,9 @@ class SimpleComponentLoader {
         break;
       case "tech-partners":
         this.initTechPartners(element);
+        break;
+      case "published-work":
+        this.initPublishedWork(element);
         break;
       case "testimonials":
         this.initTestimonials(element);
@@ -455,6 +464,29 @@ class SimpleComponentLoader {
     });
   }
 
+  // Published Work component initialization
+  initPublishedWork(element) {
+    // Intersection Observer for animations
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    element.querySelectorAll(".bg-gradient-to-br").forEach((card) => {
+      card.style.opacity = "0";
+      card.style.transform = "translateY(20px)";
+      card.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+      observer.observe(card);
+    });
+  }
+
   // Load all components on the page
   async loadAllComponents() {
     const componentMap = {
@@ -463,6 +495,7 @@ class SimpleComponentLoader {
       features: "templates/features.html",
       about: "templates/about.html",
       "tech-partners": "templates/tech-partners.html",
+      "published-work": "templates/published-work.html",
       testimonials: "templates/testimonials.html",
       cta: "templates/cta.html",
       footer: "templates/footer.html",
@@ -479,10 +512,15 @@ class SimpleComponentLoader {
       "testimonials" in componentMap
     );
     console.log(
+      "published-work in componentMap:",
+      "published-work" in componentMap
+    );
+    console.log(
       "componentMap['tech-partners']:",
       componentMap["tech-partners"]
     );
     console.log("componentMap['testimonials']:", componentMap["testimonials"]);
+    console.log("componentMap['published-work']:", componentMap["published-work"]);
 
     const componentElements = document.querySelectorAll("[data-component]");
     console.log(`Found ${componentElements.length} component elements to load`);
@@ -508,6 +546,13 @@ class SimpleComponentLoader {
       }
       else if (componentName === "tech-partners")
         templateUrl = componentMap["tech-partners"];
+      else if (componentName === "published-work") {
+        templateUrl = componentMap["published-work"];
+        console.log(`🔍 Published Work component found! Template URL: "${templateUrl}"`);
+        console.log(`🔍 componentMap["published-work"] value: "${componentMap["published-work"]}"`);
+        console.log(`🔍 componentMap keys:`, Object.keys(componentMap));
+        console.log(`🔍 componentMap has published-work:`, "published-work" in componentMap);
+      }
       else if (componentName === "testimonials")
         templateUrl = componentMap.testimonials;
       else if (componentName === "cta") templateUrl = componentMap.cta;
@@ -520,6 +565,9 @@ class SimpleComponentLoader {
       );
       console.log(`Template URL: "${templateUrl}"`);
       console.log(`Template URL type: ${typeof templateUrl}`);
+      console.log(`Component name exact match check: "${componentName}" === "published-work" = ${componentName === "published-work"}`);
+      console.log(`Component map has published-work:`, "published-work" in componentMap);
+      console.log(`Component map published-work value:`, componentMap["published-work"]);
 
       if (templateUrl) {
         console.log(`✅ Found template URL for ${componentName}: ${templateUrl}`);
