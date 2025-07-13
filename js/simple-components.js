@@ -496,6 +496,7 @@ class SimpleComponentLoader {
       about: "templates/about.html",
       "tech-partners": "templates/tech-partners.html",
       "published-work": "templates/published-work.html",
+      "our-work": "templates/our-work.html",
       testimonials: "templates/testimonials.html",
       cta: "templates/cta.html",
       footer: "templates/footer.html",
@@ -553,6 +554,8 @@ class SimpleComponentLoader {
         console.log(`🔍 componentMap keys:`, Object.keys(componentMap));
         console.log(`🔍 componentMap has published-work:`, "published-work" in componentMap);
       }
+      else if (componentName === "our-work")
+        templateUrl = componentMap["our-work"];
       else if (componentName === "testimonials")
         templateUrl = componentMap.testimonials;
       else if (componentName === "cta") templateUrl = componentMap.cta;
