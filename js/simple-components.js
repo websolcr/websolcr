@@ -485,6 +485,95 @@ class SimpleComponentLoader {
       card.style.transition = "opacity 0.6s ease, transform 0.6s ease";
       observer.observe(card);
     });
+
+    // Fetch package download count from Packagist
+    this.fetchPackageStats(element);
+  }
+
+  // Fetch package statistics from Packagist API
+  async fetchPackageStats(element) {
+    try {
+      const packageName = 'sureshhemal/laravel-sms-sri-lanka';
+      // Add cache-busting parameter to ensure fresh data
+      const timestamp = Date.now();
+      const apiUrl = `https://packagist.org/packages/${packageName}.json?t=${timestamp}`;
+      
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const packageData = data.package;
+      
+      if (packageData) {
+        // Extract download statistics
+        const downloads = packageData.downloads?.total || 0;
+        const monthlyDownloads = packageData.downloads?.monthly || 0;
+        const dailyDownloads = packageData.downloads?.daily || 0;
+        
+        // Update the download count in the UI
+        this.updateDownloadCount(element, downloads, monthlyDownloads, dailyDownloads);
+      }
+    } catch (error) {
+      // Fallback to default values if API fails
+      this.updateDownloadCount(element, 0, 0, 0);
+      
+      // Show a subtle error indicator
+      const downloadsDiv = element.querySelector('.downloads-stat');
+      if (downloadsDiv) {
+        const numberElement = downloadsDiv.querySelector('.text-2xl');
+        if (numberElement) {
+          numberElement.textContent = 'N/A';
+          numberElement.style.color = '#9CA3AF'; // gray-400
+        }
+      }
+    }
+  }
+
+  // Update download count in the UI
+  updateDownloadCount(element, totalDownloads, monthlyDownloads, dailyDownloads) {
+    // Find the stats container in the package visualization
+    const statsContainer = element.querySelector('.grid.grid-cols-2.gap-4.mb-6');
+    
+    if (statsContainer) {
+      // Find the downloads stat div
+      let downloadsDiv = statsContainer.querySelector('.downloads-stat');
+      
+      if (downloadsDiv) {
+        // Format the download count
+        const formatNumber = (num) => {
+          if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+          } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+          }
+          return num.toString();
+        };
+        
+        // Update the content with a loading animation
+        const numberElement = downloadsDiv.querySelector('.text-2xl');
+        if (numberElement) {
+          // Add a subtle loading animation
+          numberElement.style.opacity = '0.5';
+          numberElement.style.transform = 'scale(0.95)';
+          numberElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          
+          setTimeout(() => {
+            numberElement.textContent = formatNumber(totalDownloads);
+            numberElement.style.opacity = '1';
+            numberElement.style.transform = 'scale(1)';
+          }, 200);
+        }
+      }
+    }
   }
 
   // Load all components on the page
